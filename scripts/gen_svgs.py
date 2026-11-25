@@ -76,7 +76,7 @@ s.append(t)
 
 # boot log
 logs = [
-    [("[  OK  ] ", OR), ("operator authenticated ..... the-chalante", AMB)],
+    [("[  OK  ] ", OR), ("mounting neural cortex ............ done", DIM)],
     [("[  OK  ] ", OR), ("spawning agents ............. 1024/1024", DIM)],
     [("[ WARN ] ", RED), ("chain of command: 1 human -> 1024 agents", DIM)],
 ]
@@ -116,14 +116,6 @@ t, sw, _ = typed(X, 326, sub, 26, 4.3, 1.0, "s1", "bold")
 s.append(f'<g filter="url(#soft)">{t}</g>')
 s.append(f'<g opacity="0"><set attributeName="opacity" to="1" begin="5.3s" fill="freeze"/><rect class="blink" x="{X + sw + 8:.0f}" y="304" width="15" height="26" fill="{OR}"/></g>')
 
-# operator ID tag
-s.append(f'<g class="in" style="animation-delay:5.5s">')
-s.append(f'<rect x="{W - 330}" y="300" width="290" height="36" fill="#1a0c04" stroke="{RED}" stroke-width="2"/>')
-s.append(f'<rect x="{W - 330}" y="300" width="8" height="36" fill="{RED}"/>')
-s.append(f'<text x="{W - 310}" y="324" font-size="14" fill="{DIM}" letter-spacing="1">ID:</text>')
-s.append(f'<text x="{W - 276}" y="325" font-size="20" font-weight="800" fill="{AMB}" textLength="{12 * 20 * CW:.0f}" lengthAdjust="spacingAndGlyphs" filter="url(#soft)">THE-CHALANTE</text>')
-s.append("</g>")
-
 # status bar
 s.append(f'<rect y="{H - 54}" width="{W}" height="54" fill="#140803"/><rect y="{H - 54}" width="{W}" height="1.5" fill="{OR}" opacity=".5"/>')
 status = "SWARM: ONLINE  |  AGENTS: 1024  |  MODE: AGGRESSIVE  |  OVERSIGHT: HUMAN"
@@ -149,11 +141,11 @@ open(os.path.join(OUT, "banner.svg"), "w").write("\n".join(s))
 # ---------------------------------------------------------------- button
 GRN = "#39ff7a"
 SKILLS = ["PYTORCH", "SPARK", "AIRFLOW", "OPENCV", "SCIKIT-LEARN", "PYTHON", "C++"]
-BW, BH = 720, 200
+BW, BH = 720, 236
 b = []
 b.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {BW} {BH}" width="{BW}" height="{BH}" font-family="{FONT}">')
 tick = "".join(f"{k}  //  " for k in SKILLS)
-tsz = 18
+tsz = 30
 tlen = len(tick) * tsz * CW
 b.append(f"""<style>
 .pulse{{animation:pulse 1.6s ease-in-out infinite}}
@@ -162,7 +154,7 @@ b.append(f"""<style>
 @keyframes shine{{0%{{transform:translateX(-200px)}}60%,100%{{transform:translateX({BW + 100}px)}}}}
 .chev{{animation:chev 1.2s steps(3) infinite}}
 @keyframes chev{{0%{{opacity:.2}}33%{{opacity:.6}}66%,100%{{opacity:1}}}}
-.tick{{animation:tick {len(SKILLS) * 2.2:.1f}s linear infinite}}
+.tick{{animation:tick {len(SKILLS) * 3.2:.1f}s linear infinite}}
 @keyframes tick{{from{{transform:translateX(-{tlen:.1f}px)}}to{{transform:translateX(0)}}}}
 .blink{{animation:blink 1s steps(1) infinite}}
 @keyframes blink{{50%{{opacity:0}}}}
@@ -170,11 +162,11 @@ b.append(f"""<style>
 <defs>
 <filter id="g" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
 <filter id="t" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="tg" x="-5%" y="-50%" width="110%" height="200%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="tg" x="-5%" y="-50%" width="110%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="sh" x1="0" x2="1"><stop offset="0" stop-color="{OR}" stop-opacity="0"/><stop offset=".5" stop-color="{AMB}" stop-opacity=".22"/><stop offset="1" stop-color="{OR}" stop-opacity="0"/></linearGradient>
 <linearGradient id="fade" x1="0" x2="1"><stop offset="0" stop-color="{BG}"/><stop offset=".08" stop-color="{BG}" stop-opacity="0"/><stop offset=".92" stop-color="{BG}" stop-opacity="0"/><stop offset="1" stop-color="{BG}"/></linearGradient>
 <clipPath id="in"><rect x="20" y="20" width="{BW - 40}" height="{BH - 40}"/></clipPath>
-<clipPath id="band"><rect x="22" y="128" width="{BW - 44}" height="48"/></clipPath>
+<clipPath id="band"><rect x="22" y="128" width="{BW - 44}" height="86"/></clipPath>
 <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1.4" fill="#000" opacity=".5"/></pattern>
 </defs>""")
 b.append(f'<rect class="pulse" x="20" y="20" width="{BW - 40}" height="{BH - 40}" fill="none" stroke="{OR}" stroke-width="8" filter="url(#g)"/>')
@@ -192,12 +184,12 @@ for i in range(3):
     b.append(f'<text class="chev" style="animation-delay:{(2 - i) * 0.2:.1f}s" x="{BW / 2 + lw / 2 + 22 + i * 18}" y="90" font-size="34" font-weight="bold" fill="{RED}">&lt;</text>')
 # skills ticker band
 b.append(f'<rect x="22" y="126" width="{BW - 44}" height="1.5" fill="{GRN}" opacity=".5"/>')
-b.append(f'<rect x="22" y="128" width="{BW - 44}" height="50" fill="#03140a"/>')
+b.append(f'<rect x="22" y="128" width="{BW - 44}" height="86" fill="#03140a"/>')
 b.append(f'<g clip-path="url(#band)"><g class="tick">')
 for k in range(3):
-    b.append(f'<text x="{k * tlen:.1f}" y="168" font-size="{tsz}" font-weight="bold" fill="{GRN}" letter-spacing="0" textLength="{tlen:.1f}" lengthAdjust="spacingAndGlyphs" filter="url(#tg)">{tick.replace("&", "&amp;")}</text>')
-b.append(f'</g><rect x="22" y="128" width="{BW - 44}" height="50" fill="url(#fade)"/></g>')
-b.append(f'<text x="30" y="143" font-size="11" fill="{GRN}" opacity=".8" letter-spacing="2" class="blink">● ARSENAL</text>')
+    b.append(f'<text x="{k * tlen:.1f}" y="196" font-size="{tsz}" font-weight="bold" fill="{GRN}" letter-spacing="0" textLength="{tlen:.1f}" lengthAdjust="spacingAndGlyphs" filter="url(#tg)">{tick.replace("&", "&amp;")}</text>')
+b.append(f'</g><rect x="22" y="128" width="{BW - 44}" height="86" fill="url(#fade)"/></g>')
+b.append(f'<text x="32" y="148" font-size="13" fill="{GRN}" opacity=".85" letter-spacing="3" class="blink">● ARSENAL</text>')
 b.append(f'<g clip-path="url(#in)"><rect width="{BW}" height="{BH}" fill="url(#scan)"/></g>')
 b.append("</svg>")
 open(os.path.join(OUT, "enter-button.svg"), "w").write("\n".join(b))
