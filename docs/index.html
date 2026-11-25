@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>the-chalante // Primarch of the Agent Swarms</title>
+<meta name="description" content="the-chalante — AI researcher and AI-powered developer. Neural machine translation, systems code, data pipelines.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0605; --panel:rgba(14,7,4,.78); --or:#ff6a00; --red:#ff2a1a; --amb:#ffb000;
+  --dim:#a8501c; --txt:#f3c9a6; --grn:#39ff7a;
+  --mono:'JetBrains Mono','Fira Code',Consolas,'DejaVu Sans Mono','Courier New',monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:15px;line-height:1.6;overflow-x:hidden}
+::selection{background:var(--or);color:#000}
+a{color:var(--amb)}
+
+/* swarm canvas + CRT overlays */
+#swarm{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+body::before{content:"";position:fixed;inset:0;z-index:50;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.35) 0 1px,transparent 1px 3px)}
+body::after{content:"";position:fixed;inset:0;z-index:51;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.7) 100%)}
+.sweep{position:fixed;left:0;right:0;height:120px;z-index:52;pointer-events:none;
+  background:linear-gradient(transparent,rgba(255,106,0,.05),transparent);animation:sweep 7s linear infinite}
+@keyframes sweep{from{top:-120px}to{top:100%}}
+
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 20px 60px}
+
+/* HUD */
+.hud{position:fixed;z-index:40;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:space-between;
+  padding:8px 20px calc(8px + env(safe-area-inset-bottom,0px));font-size:12px;letter-spacing:1px;color:var(--dim);
+  background:rgba(10,5,3,.85);border-top:1px solid rgba(255,106,0,.4)}
+.hud b{color:var(--or);font-weight:700}
+.hud .hint{color:var(--grn)}
+
+/* hero */
+.hero{min-height:100vh;min-height:100svh;display:flex;align-items:center;padding-block:40px 70px}
+.term{width:100%;min-width:0;background:var(--panel);border:3px solid var(--or);border-radius:10px;overflow:hidden;
+  box-shadow:0 0 40px rgba(255,106,0,.25),inset 0 0 60px rgba(0,0,0,.6);backdrop-filter:blur(3px)}
+.bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#1a0c04;border-bottom:1px solid rgba(255,106,0,.6);font-size:13px;color:var(--or)}
+.bar i{width:11px;height:11px;display:inline-block}
+.bar .t{min-width:0;opacity:.75;margin-left:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live{white-space:nowrap;margin-left:auto;color:var(--red);font-weight:700;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.term-body{padding:22px clamp(16px,4vw,40px) 30px}
+.boot{margin:0 0 26px;min-height:7.4em;font-size:clamp(12px,1.5vw,15px);white-space:pre-wrap;color:var(--dim)}
+.boot .ok{color:var(--or)} .boot .warn{color:var(--red)} .boot .hi{color:var(--amb)} .boot .cmd{color:var(--or)}
+
+h1.glitch{position:relative;margin:0;overflow-wrap:anywhere;font-size:clamp(28px,6.2vw,68px);font-weight:800;line-height:1.05;letter-spacing:.5px;color:var(--or);
+  text-shadow:0 0 12px rgba(255,106,0,.8),0 0 30px rgba(255,106,0,.35)}
+h1.glitch::before,h1.glitch::after{content:attr(data-text);position:absolute;inset:0;pointer-events:none}
+h1.glitch::before{color:var(--red);opacity:.8;animation:g1 4s infinite;text-shadow:none}
+h1.glitch::after{color:var(--amb);opacity:.55;animation:g2 4s infinite;text-shadow:none}
+@keyframes g1{0%,85%,100%{transform:none;clip-path:inset(0)}86%{transform:translate(-6px,2px);clip-path:inset(10% 0 55% 0)}88%{transform:translate(5px,-2px);clip-path:inset(60% 0 5% 0)}90%{transform:translate(-3px,0);clip-path:inset(30% 0 40% 0)}92%{transform:translate(4px,1px)}}
+@keyframes g2{0%,85%,100%{transform:none;clip-path:inset(0)}86%{transform:translate(5px,-1px);clip-path:inset(50% 0 20% 0)}88%{transform:translate(-6px,2px);clip-path:inset(5% 0 70% 0)}90%{transform:translate(3px,-1px)}92%{transform:translate(-4px,0)}}
+.rule{height:4px;margin:14px 0 18px;background:linear-gradient(90deg,var(--red) 0 120px,var(--or) 120px);box-shadow:0 0 10px rgba(255,106,0,.6)}
+.sub{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+.sub p{margin:0;font-size:clamp(16px,2.4vw,26px);font-weight:700;color:var(--or)}
+.sub p .r{color:var(--red)}
+.cur{display:inline-block;width:.55em;height:1em;background:var(--or);vertical-align:-.12em;margin-left:6px;animation:blink 1s steps(1) infinite}
+.idtag{display:flex;align-items:center;gap:10px;padding:6px 16px 6px 12px;border:2px solid var(--red);border-left-width:8px;background:#1a0c04}
+.idtag span{font-size:12px;color:var(--dim)} .idtag strong{color:var(--amb);font-size:20px;text-shadow:0 0 8px rgba(255,176,0,.6)}
+
+nav.menu{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+nav.menu a{flex:1 1 150px;text-align:center;padding:12px 10px;border:2px solid var(--or);color:var(--or);text-decoration:none;font-weight:700;letter-spacing:2px;
+  background:rgba(0,0,0,.5);transition:background .15s,color .15s,box-shadow .15s}
+nav.menu a:hover,nav.menu a:focus-visible{background:var(--or);color:#000;box-shadow:0 0 24px rgba(255,106,0,.6);outline:none}
+nav.menu a::before{content:"[ "} nav.menu a::after{content:" ]"}
+@media (max-width:520px){nav.menu a{letter-spacing:0;font-size:13px;white-space:nowrap;flex-basis:130px}}
+
+/* sections */
+section{margin-top:70px;scroll-margin-top:20px}
+.panel{background:var(--panel);border:2px solid rgba(255,106,0,.7);padding:clamp(18px,3vw,32px);backdrop-filter:blur(3px);position:relative}
+.panel::before,.panel::after{content:"";position:absolute;width:22px;height:22px;border:4px solid var(--red)}
+.panel::before{top:-8px;left:-8px;border-right:0;border-bottom:0}
+.panel::after{bottom:-8px;right:-8px;border-left:0;border-top:0}
+h2{margin:0 0 18px;font-size:clamp(20px,3vw,30px);color:var(--or);letter-spacing:2px}
+h2 .n{color:var(--red);margin-right:10px}
+h2 .p{color:var(--dim);font-size:.6em;font-weight:400;margin-left:10px}
+p{margin:0 0 12px}
+.k{color:var(--amb)}
+.dim{color:var(--dim)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{border:1px solid rgba(255,106,0,.45);padding:16px;background:rgba(0,0,0,.45)}
+.card h3{margin:0 0 8px;font-size:16px;color:var(--amb)}
+.card .pri{font-size:12px;color:var(--red);letter-spacing:2px}
+.card p{font-size:14px;margin:0}
+
+.doctrine{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.layer{padding:16px;border-left:6px solid var(--or);background:rgba(0,0,0,.45)}
+.layer.deep{border-color:var(--red)}
+.layer h3{margin:0 0 6px;font-size:15px;letter-spacing:2px}
+.layer ul{margin:8px 0 0;padding-left:18px}
+
+.tags{display:flex;flex-wrap:wrap;gap:10px}
+.tag{padding:6px 12px;border:1px solid var(--grn);color:var(--grn);background:rgba(3,20,10,.8);font-weight:700;letter-spacing:1px;
+  text-shadow:0 0 8px rgba(57,255,122,.5)}
+.tag.soon{border-style:dashed;opacity:.6}
+.group{margin-bottom:18px}
+.group .lbl{font-size:12px;color:var(--dim);letter-spacing:3px;margin-bottom:8px}
+
+.ticker{overflow:hidden;border-block:1px solid rgba(57,255,122,.4);background:rgba(3,20,10,.85);margin-top:70px;
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.ticker div{display:inline-flex;white-space:nowrap;animation:tick 30s linear infinite;padding-block:10px}
+.ticker span{color:var(--grn);font-weight:800;letter-spacing:2px;padding-right:2em;text-shadow:0 0 8px rgba(57,255,122,.5)}
+@keyframes tick{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+.contact a.big{display:inline-block;margin-top:6px;padding:12px 22px;border:2px solid var(--or);color:var(--or);text-decoration:none;font-weight:800;letter-spacing:2px}
+.contact a.big:hover{background:var(--or);color:#000}
+footer{margin-top:50px;text-align:center;font-size:12px;color:var(--dim)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important}
+  .sweep{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="swarm" aria-hidden="true"></canvas>
+<div class="sweep" aria-hidden="true"></div>
+
+<main>
+  <header class="hero">
+    <div class="term">
+      <div class="bar"><i style="background:var(--red)"></i><i style="background:var(--or)"></i><i style="background:var(--amb)"></i>
+        <span class="t">root@the-chalante: ~/swarm — tty1 — PID 1</span><span class="live">■ LIVE</span></div>
+      <div class="term-body">
+        <pre class="boot" id="boot" aria-hidden="true"></pre>
+        <h1 class="glitch" data-text="PRIMARCH OF THE AGENT SWARMS">PRIMARCH OF THE AGENT SWARMS</h1>
+        <div class="rule"></div>
+        <div class="sub">
+          <p><span class="r">&gt;</span> AI RESEARCHER <span class="r">//</span> AI-POWERED DEV<span class="cur"></span></p>
+          <div class="idtag"><span>ID:</span><strong>THE-CHALANTE</strong></div>
+        </div>
+        <nav class="menu">
+          <a href="#dossier">Dossier</a>
+          <a href="#doctrine">Doctrine</a>
+          <a href="#research">Research</a>
+          <a href="#arsenal">Arsenal</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <section id="dossier">
+    <div class="panel">
+      <h2><span class="n">01</span>DOSSIER<span class="p">$ cat whoami.txt</span></h2>
+      <p>Student of <span class="k">Artificial Intelligence Engineering</span> at the <span class="k">Universidad de Alicante</span> (part of the degree's first cohort).</p>
+      <p>Joining the <span class="k">Transducens</span> research group (UA) to work on neural machine translation for low-resource languages, with the aim of publishing.</p>
+      <p>Strong formal base in maths, logic, probabilistic reasoning, algorithms, HPC and systems. Currently going deep on ML, deep learning, NLP and computer vision.</p>
+      <p class="dim">Languages: Spanish (native) · Valencian/Catalan (native) · English</p>
+    </div>
+  </section>
+
+  <section id="doctrine">
+    <div class="panel">
+      <h2><span class="n">02</span>THE TOPO DOCTRINE<span class="p">// how the swarm is run</span></h2>
+      <p>A <span class="k">topo</span> (mole) digs deep in one territory and moves unseen. The core gets hand-built; the surface gets delegated to the swarm.</p>
+      <div class="doctrine">
+        <div class="layer deep">
+          <h3 style="color:var(--red)">▼ UNDERGROUND // BY HAND</h3>
+          <ul><li>AI research</li><li>Systems code</li><li>Data pipelines</li></ul>
+        </div>
+        <div class="layer">
+          <h3 style="color:var(--or)">▲ SURFACE // BY THE SWARM</h3>
+          <ul><li>Websites (like this one)</li><li>Servers</li><li>Games, tools, whatever is next</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="research">
+    <div class="panel">
+      <h2><span class="n">03</span>RESEARCH TARGETS<span class="p">// priority order</span></h2>
+      <div class="grid">
+        <div class="card"><div class="pri">PRIORITY 01</div><h3>Distillation of multilingual NMT</h3>
+          <p>Compressing large multilingual translation models into small, efficient students for low-resource languages.</p></div>
+        <div class="card"><div class="pri">PRIORITY 02</div><h3>Low-resource NMT</h3>
+          <p>Neural machine translation and data augmentation when parallel data is scarce.</p></div>
+        <div class="card"><div class="pri">PRIORITY 03</div><h3>LLMs beyond English</h3>
+          <p>LLMs for low-resource languages, LLMs in education and LLM safety.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-hidden="true"><div id="tick"></div></div>
+
+  <section id="arsenal">
+    <div class="panel">
+      <h2><span class="n">04</span>ARSENAL<span class="p">$ ls ~/weapons</span></h2>
+      <div class="group"><div class="lbl">MACHINE LEARNING // VISION</div>
+        <div class="tags"><span class="tag">PyTorch</span><span class="tag">Scikit-Learn</span><span class="tag">OpenCV</span></div></div>
+      <div class="group"><div class="lbl">DATA PIPELINES</div>
+        <div class="tags"><span class="tag">Spark</span><span class="tag">Airflow</span></div></div>
+      <div class="group"><div class="lbl">LANGUAGES</div>
+        <div class="tags"><span class="tag">Python</span><span class="tag">C++</span><span class="tag">Rust</span></div></div>
+      <div class="group"><div class="lbl">PROJECTS</div>
+        <div class="tags"><span class="tag">Rust wrapper for llama.cpp</span><span class="tag soon">more incoming…</span></div></div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="panel">
+      <h2><span class="n">05</span>OPEN CHANNEL</h2>
+      <p>The swarm is listening.</p>
+      <a class="big" href="https://github.com/the-chalante">&gt; GITHUB / THE-CHALANTE</a>
+    </div>
+  </section>
+
+  <footer>built by a human, assembled by the swarm // the-chalante</footer>
+</main>
+
+<div class="hud" aria-hidden="true">
+  <span>AGENTS: <b id="hAgents">0</b></span>
+  <span>DRIFT: <b id="hDrift">→</b></span>
+  <span>MODE: <b id="hMode">PATROL</b></span>
+  <span class="hint">MOVE: SCATTER // CLICK: RALLY</span>
+</div>
+
+<script>
+/* ---------- boot log typewriter ---------- */
+(() => {
+  const lines = [
+    ['<span class="hi">root@the-chalante:~$</span> <span class="cmd">./primarch --summon --swarm=all</span>'],
+    ['<span class="ok">[  OK  ]</span> operator authenticated ..... <span class="hi">the-chalante</span>'],
+    ['<span class="ok">[  OK  ]</span> spawning agents ............. 1024/1024'],
+    ['<span class="warn">[ WARN ]</span> chain of command: 1 human -&gt; 1024 agents'],
+  ].map(l => l[0]);
+  const el = document.getElementById('boot');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { el.innerHTML = lines.join('\n'); return; }
+  // type the plain text, but keep the markup: reveal char by char across tags
+  let li = 0;
+  const typeLine = () => {
+    if (li >= lines.length) return;
+    const tmp = document.createElement('div'); tmp.innerHTML = lines[li];
+    const full = lines[li]; const plainLen = tmp.textContent.length; let n = 0;
+    const lineEl = document.createElement('div'); el.appendChild(lineEl);
+    const step = () => {
+      n += li === 0 ? 1 : 3;
+      lineEl.innerHTML = cut(full, n);
+      if (n < plainLen) setTimeout(step, li === 0 ? 35 : 12);
+      else { li++; setTimeout(typeLine, 220); }
+    };
+    step();
+  };
+  // truncate HTML string to n visible chars
+  const cut = (html, n) => {
+    let out = '', vis = 0, i = 0;
+    while (i < html.length && vis < n) {
+      if (html[i] === '<') { const j = html.indexOf('>', i); out += html.slice(i, j + 1); i = j + 1; continue; }
+      if (html[i] === '&') { const j = html.indexOf(';', i); out += html.slice(i, j + 1); i = j + 1; vis++; continue; }
+      out += html[i++]; vis++;
+    }
+    // close any open spans
+    const opens = (out.match(/<span/g) || []).length - (out.match(/<\/span>/g) || []).length;
+    return out + '</span>'.repeat(Math.max(0, opens));
+  };
+  setTimeout(typeLine, 300);
+})();
+
+/* ---------- skills ticker ---------- */
+(() => {
+  const skills = ['PYTORCH','SPARK','AIRFLOW','OPENCV','SCIKIT-LEARN','PYTHON','C++','RUST'];
+  const html = skills.map(s => `<span>${s} //</span>`).join('');
+  document.getElementById('tick').innerHTML = html + html + html + html;
+})();
+
+/* ---------- boids swarm ---------- */
+(() => {
+  const cv = document.getElementById('swarm');
+  const ctx = cv.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const COLORS = ['#ff6a00', '#ff6a00', '#ff6a00', '#ff8a1f', '#ffb000', '#ff2a1a'];
+  let W, H, DPR, boids = [], grid, cellSize = 60;
+  const mouse = { x: -1e4, y: -1e4, active: false };
+  let rally = null; // {x,y,t}
+  const P = { maxSpeed: 3.2, maxForce: 0.06, sepR: 22, aliR: 55, cohR: 60,
+              sep: 1.7, ali: 1.0, coh: 0.75, drift: 0.035, fear: 130 };
+
+  const resize = () => {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * DPR; cv.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const target = Math.round(Math.min(420, Math.max(90, W * H / 5200)));
+    while (boids.length < target) boids.push(spawn());
+    boids.length = target;
+    ctx.fillStyle = '#0a0605'; ctx.fillRect(0, 0, W, H);
+    document.getElementById('hAgents').textContent = target;
+  };
+  const spawn = () => {
+    const a = Math.random() * Math.PI * 2;
+    return { x: Math.random() * W, y: Math.random() * H, vx: Math.cos(a) * 2, vy: Math.sin(a) * 2,
+             c: COLORS[(Math.random() * COLORS.length) | 0], s: 0.8 + Math.random() * 0.6 };
+  };
+
+  const buildGrid = () => {
+    grid = new Map();
+    for (const b of boids) {
+      const k = ((b.x / cellSize) | 0) + ',' + ((b.y / cellSize) | 0);
+      let arr = grid.get(k); if (!arr) grid.set(k, arr = []); arr.push(b);
+    }
+  };
+  const near = (b, fn) => {
+    const cx = (b.x / cellSize) | 0, cy = (b.y / cellSize) | 0;
+    for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
+      const arr = grid.get((cx + i) + ',' + (cy + j)); if (arr) for (const o of arr) if (o !== b) fn(o);
+    }
+  };
+  const limit = (x, y, m) => { const l = Math.hypot(x, y); return l > m ? [x / l * m, y / l * m] : [x, y]; };
+
+  let t0 = performance.now();
+  const step = (now) => {
+    const t = (now - t0) / 1000;
+    // drift: the whole swarm sweeps from side to side, flipping roughly every 14s
+    const driftDir = Math.sin(t * 0.22) >= 0 ? 1 : -1;
+    const driftAmt = Math.abs(Math.sin(t * 0.22));
+    document.getElementById('hDrift').textContent = driftDir > 0 ? '→ →' : '← ←';
+    const mode = rally && now - rally.t < 2200 ? 'RALLY' : (mouse.active ? 'EVADE' : 'PATROL');
+    document.getElementById('hMode').textContent = mode;
+
+    buildGrid();
+    for (const b of boids) {
+      let sx = 0, sy = 0, ax = 0, ay = 0, cx = 0, cy = 0, na = 0, nc = 0;
+      near(b, o => {
+        const dx = b.x - o.x, dy = b.y - o.y, d2 = dx * dx + dy * dy;
+        if (d2 < P.sepR * P.sepR && d2 > 0) { const d = Math.sqrt(d2); sx += dx / d / d; sy += dy / d / d; }
+        if (d2 < P.aliR * P.aliR) { ax += o.vx; ay += o.vy; na++; }
+        if (d2 < P.cohR * P.cohR) { cx += o.x; cy += o.y; nc++; }
+      });
+      let fx = 0, fy = 0;
+      const steer = (dx, dy, w) => {
+        if (!dx && !dy) return;
+        let [tx, ty] = limit(dx, dy, 1e9);
+        const l = Math.hypot(tx, ty); tx = tx / l * P.maxSpeed - b.vx; ty = ty / l * P.maxSpeed - b.vy;
+        [tx, ty] = limit(tx, ty, P.maxForce); fx += tx * w; fy += ty * w;
+      };
+      steer(sx, sy, P.sep);
+      if (na) steer(ax / na, ay / na, P.ali);
+      if (nc) steer(cx / nc - b.x, cy / nc - b.y, P.coh);
+      fx += driftDir * P.drift * driftAmt;
+      // cursor: agents flee
+      const mx = b.x - mouse.x, my = b.y - mouse.y, md = Math.hypot(mx, my);
+      if (md < P.fear && md > 0) { fx += mx / md * 0.35 * (1 - md / P.fear); fy += my / md * 0.35 * (1 - md / P.fear); }
+      // click: rally toward point
+      if (rally && now - rally.t < 2200) {
+        const rx = rally.x - b.x, ry = rally.y - b.y, rd = Math.hypot(rx, ry);
+        if (rd > 1) { fx += rx / rd * 0.12; fy += ry / rd * 0.12; }
+      }
+      b.vx += fx; b.vy += fy;
+      [b.vx, b.vy] = limit(b.vx, b.vy, P.maxSpeed * (mode === 'RALLY' ? 1.6 : 1));
+      b.x += b.vx; b.y += b.vy;
+      if (b.x < -10) b.x = W + 10; else if (b.x > W + 10) b.x = -10;
+      if (b.y < -10) b.y = H + 10; else if (b.y > H + 10) b.y = -10;
+    }
+
+    // trails: fade previous frame instead of clearing
+    ctx.fillStyle = 'rgba(10,6,5,0.28)'; ctx.fillRect(0, 0, W, H);
+    for (const b of boids) {
+      const a = Math.atan2(b.vy, b.vx), s = 6 * b.s;
+      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(a);
+      ctx.fillStyle = b.c;
+      ctx.beginPath(); ctx.moveTo(s * 1.4, 0); ctx.lineTo(-s, s * 0.6); ctx.lineTo(-s * 0.5, 0); ctx.lineTo(-s, -s * 0.6); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+    if (rally && now - rally.t < 700) {
+      const k = (now - rally.t) / 700;
+      ctx.strokeStyle = `rgba(255,42,26,${1 - k})`; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(rally.x, rally.y, 10 + k * 90, 0, Math.PI * 2); ctx.stroke();
+    }
+    if (!reduce) requestAnimationFrame(step);
+  };
+
+  addEventListener('resize', resize);
+  addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.active = true; });
+  addEventListener('pointerleave', () => { mouse.x = mouse.y = -1e4; mouse.active = false; });
+  document.addEventListener('mouseout', e => { if (!e.relatedTarget) { mouse.x = mouse.y = -1e4; mouse.active = false; } });
+  addEventListener('pointerdown', e => {
+    if (e.target.closest('a,button')) return;
+    rally = { x: e.clientX, y: e.clientY, t: performance.now() };
+  });
+  resize();
+  if (reduce) { for (let i = 0; i < 120; i++) step(performance.now()); } else requestAnimationFrame(step);
+})();
+</script>
+</body>
+</html>
